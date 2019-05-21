@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94d4bf9ac7f4a933030e46a346ee2917",
+    "content-hash": "8d0ede62ab7e08a6ffdb53b57291e3d0",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2635,6 +2635,56 @@
                 "environment"
             ],
             "time": "2019-03-06T09:39:45+00:00"
+        },
+        {
+            "name": "zaknesler/tailwind-preset",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zaknesler/tailwind-preset.git",
+                "reference": "92c493f6794f249b2ef5264753c9cb15548632e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zaknesler/tailwind-preset/zipball/92c493f6794f249b2ef5264753c9cb15548632e6",
+                "reference": "92c493f6794f249b2ef5264753c9cb15548632e6",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ZakNesler\\TailwindPreset\\TailwindServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZakNesler\\TailwindPreset\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zak Nesler",
+                    "email": "contact@zaknesler.com"
+                }
+            ],
+            "description": "A Tailwind CSS preset for Laravel.",
+            "keywords": [
+                "laravel",
+                "laravel preset",
+                "preset",
+                "tailwind",
+                "tailwindcss"
+            ],
+            "time": "2019-05-13T14:07:37+00:00"
         }
     ],
     "packages-dev": [
