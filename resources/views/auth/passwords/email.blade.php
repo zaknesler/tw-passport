@@ -28,6 +28,10 @@
                                 </div>
                             @endif
 
+                            <div class="mb-8 w-64 mx-auto text-center text-gray-600">
+                                Enter your email and we'll send you a link to reset your password.
+                            </div>
+
                             <div class="form-group">
                                 <div class="relative">
                                     <div class="form-icon">

@@ -12,7 +12,7 @@
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
     <body class="font-sans font-normal text-base tracking-normal leading-normal bg-white text-gray-700 min-h-full h-full">
-        <div id="app" class="min-h-full h-full" v-cloak>
+        <div id="app" class="min-h-full h-full relative">
             @hasSection('show-header')
                 @include('layouts/partials/_header')
             @endif
