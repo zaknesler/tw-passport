@@ -24,7 +24,7 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="client in clients">
+                        <tr v-for="client in clients" :key="client.id">
                             <!-- ID -->
                             <td style="vertical-align: middle;">
                                 {{ client.id }}
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <modal :visible="createForm.visible" ref="createClientModal">
+        <modal :visible="createForm.visible" @close="createForm.visible = false">
             <div class="border border-gray-400 bg-white rounded-lg">
                 <div class="p-4 border-b bg-gray-100 rounded-t-lg flex items-center justify-between">
                     <h4 class="text-gray-600 font-semibold">Create Client</h4>
@@ -76,57 +76,55 @@
                 </div>
 
                 <div class="p-6">
-                    <!-- Form Errors -->
-                    <div class="alert alert-danger" v-if="createForm.errors.length > 0">
-                        <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
-                        <br>
-                        <ul>
-                            <li v-for="error in createForm.errors">
-                                {{ error }}
-                            </li>
+                    <div class="mb-6 p-4 border border-red-200 bg-red-100 text-red-700 rounded-lg" v-if="createForm.errors.length > 0">
+                        <div class="mb-2 font-semibold text-sm">Something went wrong!</div>
+                        <ul class="pl-4 list-disc">
+                            <li class="mb-1 text-sm" v-for="error in createForm.errors" :key="error" v-text="error" />
                         </ul>
                     </div>
 
                     <!-- Create Client Form -->
                     <form role="form">
                         <!-- Name -->
-                        <div>
+                        <label class="block mb-6">
+                            <span class="mb-2 block text-sm font-semibold text-gray-600">Name</span>
+
                             <input
                                 autofocus
                                 required
                                 tabindex="1"
                                 type="text"
-                                placeholder="Name"
+                                placeholder="Example App"
                                 class="form-input"
                                 @keyup.enter="store"
                                 v-model="createForm.name"
                             />
 
-                            <div class="mt-2 text-gray-600 text-sm">Something your users will recognize and trust.</div>
-                        </div>
+                            <div class="mt-2 text-gray-600 text-xs">Something your users will recognize and trust.</div>
+                        </label>
 
                         <!-- Redirect URL -->
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label">Redirect URL</label>
+                        <label class="block mb-6">
+                            <span class="mb-2 block text-sm font-semibold text-gray-600">Redirect URL</span>
 
-                            <div class="col-md-9">
-                                <input type="text" class="form-input" name="redirect" @keyup.enter="store" v-model="createForm.redirect">
+                            <input
+                                required
+                                tabindex="2"
+                                type="text"
+                                placeholder="https://example.com/oauth/callback"
+                                class="form-input"
+                                @keyup.enter="store"
+                                v-model="createForm.redirect"
+                            />
 
-                                <span class="form-text text-muted">
-                                    Your application's authorization callback URL.
-                                </span>
-                            </div>
+                            <div class="mt-2 text-gray-600 text-xs">Your application's authorization callback URL.</div>
+                        </label>
+
+                        <div class="text-right">
+                            <button class="btn px-8" @click.prevent="store">Create</button>
                         </div>
                     </form>
                 </div>
-
-                <!-- <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                    <button type="button" class="btn btn-primary" @click.prevent="store">
-                        Create
-                    </button>
-                </div> -->
             </div>
         </modal>
 
@@ -148,7 +146,7 @@
                             <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
                             <br>
                             <ul>
-                                <li v-for="error in editForm.errors">
+                                <li v-for="error in editForm.errors" :key="error">
                                     {{ error }}
                                 </li>
                             </ul>
@@ -201,7 +199,14 @@
 </template>
 
 <script>
+    import _ from 'lodash'
+    import vClickOutside from 'v-click-outside'
+
     export default {
+        directives: {
+            clickOutside: vClickOutside.directive
+        },
+
         data: () => ({
             clients: [],
             createForm: {
@@ -229,14 +234,6 @@
         methods: {
             prepareComponent() {
                 this.getClients()
-
-                // $('#modal-create-client').on('shown.bs.modal', () => {
-                //     $('#create-client-name').focus()
-                // })
-
-                // this.$refs.editClientModal.on('shown.bs.modal', () => {
-                //     $('#edit-client-name').focus()
-                // })
             },
 
             getClients() {
@@ -244,27 +241,8 @@
                     .then(response => this.clients = response.data)
             },
 
-            showCreateClientForm() {
-                this.data.createForm.visible = true
-            },
-
-            hideCreateClientForm() {
-                this.$refs.createClientModal.classList.add('hidden')
-            },
-
-            showEditClientForm() {
-                this.$refs.editClientModal.classList.remove('hidden')
-            },
-
-            hideEditClientForm() {
-                this.$refs.editClientModal.classList.add('hidden')
-            },
-
             store() {
-                this.persistClient(
-                    'post', '/oauth/clients',
-                    this.createForm, this.$refs.createClientModal
-                )
+                this.persistClient('post', '/oauth/clients', this.createForm)
             },
 
             edit(client) {
@@ -276,13 +254,10 @@
             },
 
             update() {
-                this.persistClient(
-                    'put', '/oauth/clients/' + this.editForm.id,
-                    this.editForm, this.$refs.editClientModal
-                )
+                this.persistClient('put', '/oauth/clients/' + this.editForm.id, this.editForm)
             },
 
-            persistClient(method, uri, form, modal) {
+            persistClient(method, uri, form) {
                 form.errors = []
 
                 axios[method](uri, form)
@@ -293,7 +268,7 @@
                         form.redirect = ''
                         form.errors = []
 
-                        modal.classList.add('hidden')
+                        form.visible = false
                     })
                     .catch(error => {
                         if (typeof error.response.data === 'object') {

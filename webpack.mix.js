@@ -4,6 +4,7 @@ const mix = require('laravel-mix')
 const tailwind = require('tailwindcss')
 
 mix.setPublicPath('public')
+  .disableSuccessNotifications()
   .less('resources/less/app.less', 'public/css')
   .js('resources/js/app.js', 'public/js')
   .options({
